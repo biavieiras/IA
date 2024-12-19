@@ -73,6 +73,7 @@ def algoritmo_genetico(matriz_custos, tamanho_populacao=100, num_geracoes=1000, 
     plt.xlabel("Gerações")
     plt.ylabel("Custo")
     plt.grid()
+    plt.savefig('grafico_algoritmo_genetico.png')
     plt.show()
     
     return melhor_solucao, melhor_custo

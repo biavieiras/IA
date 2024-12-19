@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 
 # Função para calcular o custo total de uma trajetória
 def calcular_trajeto_custo(trajeto, matriz_distancias):
@@ -25,7 +26,7 @@ def selecionar_proxima_parada(atual, opcoes, feromonio, atratividade, peso_ferom
     return random.choices(opcoes, weights=probabilidades, k=1)[0]
 
 # Implementação do algoritmo baseado em colônia de formigas
-def otimizacao_por_formigas(matriz_distancias, qtd_formigas=10, max_iteracoes=100, peso_feromonio=1.0, peso_heuristica=5.0, taxa_evaporacao=0.5, intensificacao=100):
+def otimizacao_por_formigas(matriz_distancias, qtd_formigas=100, max_iteracoes=1000, peso_feromonio=1.0, peso_heuristica=5.0, taxa_evaporacao=0.1, intensificacao=100):
     n_cidades = len(matriz_distancias)
 
     # Inicialização das trilhas de feromônio
@@ -34,6 +35,7 @@ def otimizacao_por_formigas(matriz_distancias, qtd_formigas=10, max_iteracoes=10
 
     melhor_trajeto = None
     menor_custo = float('inf')
+    historico_custos = []  # Para armazenar o menor custo em cada iteração
 
     for iteracao in range(max_iteracoes):
         trajetos = []
@@ -70,11 +72,26 @@ def otimizacao_por_formigas(matriz_distancias, qtd_formigas=10, max_iteracoes=10
                 trilhas[trajeto[i]][trajeto[i+1]] += intensificacao / custo
             trilhas[trajeto[-1]][trajeto[0]] += intensificacao / custo  # Fechamento do ciclo
 
+        # Armazenar o menor custo desta iteração
+        historico_custos.append(menor_custo)
+
         # Feedback da iteração
         print(f"Iteração {iteracao + 1}: Menor custo = {menor_custo}")
 
     print("\nMelhor trajeto encontrado:", melhor_trajeto)
     print("Custo do melhor trajeto:", menor_custo)
+
+    # Gerar gráfico de convergência
+    plt.figure(figsize=(10, 6))
+    plt.plot(historico_custos, label='Menor Custo')
+    plt.title('Convergência do Algoritmo de Colônia de Formigas')
+    plt.xlabel('Iteração')
+    plt.ylabel('Custo')
+    plt.legend()
+    plt.grid()
+    plt.savefig('grafico_colonia_formigas.png')  # Salvar o gráfico como imagem
+    plt.show()
+
     return melhor_trajeto, menor_custo
 
 # Definição da matriz de custos
